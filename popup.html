@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      width: 450px;
+      min-height: 550px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 0;
+    }
+    
+    .container {
+      background: white;
+      margin: 0;
+      min-height: 550px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+    
+    .header p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    
+    .upload-section {
+      padding: 15px 20px;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .upload-area {
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    
+    .upload-area:hover {
+      border-color: #667eea;
+      background: white;
+    }
+    
+    .upload-area.dragover {
+      border-color: #667eea;
+      background: #eef2ff;
+    }
+    
+    #fileInput {
+      display: none;
+    }
+    
+    .upload-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+    
+    .upload-text {
+      font-size: 14px;
+      color: #4b5563;
+      margin-bottom: 5px;
+    }
+    
+    .upload-hint {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    
+    .file-loaded {
+      background: #d1fae5;
+      border: 2px solid #10b981;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .file-loaded.show {
+      display: flex;
+    }
+    
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .file-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #065f46;
+    }
+    
+    .file-count {
+      font-size: 11px;
+      color: #059669;
+      background: white;
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+    
+    .clear-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    
+    .clear-btn:hover {
+      background: #dc2626;
+    }
+    
+    .search-section {
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .search-box {
+      position: relative;
+      margin-bottom: 10px;
+    }
+    
+    #searchInput {
+      width: 100%;
+      padding: 12px 40px 12px 15px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    
+    #searchInput:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    #searchInput:disabled {
+      background: #f3f4f6;
+      cursor: not-allowed;
+    }
+    
+    .search-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+    }
+    
+    .examples {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+    
+    .examples strong {
+      color: #374151;
+    }
+    
+    .results {
+      flex: 1;
+      padding: 15px 20px;
+      overflow-y: auto;
+      max-height: 320px;
+    }
+    
+    .result-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+    
+    .result-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-color: #667eea;
+    }
+    
+    .address {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+    
+    .location {
+      font-size: 12px;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .badge {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-left: 5px;
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 40px 20px;
+      color: #9ca3af;
+    }
+    
+    .no-results-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #667eea;
+    }
+    
+    .spinner {
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .copy-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 11px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    
+    .copy-btn:hover {
+      background: #5568d3;
+    }
+    
+    .copy-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .copied {
+      background: #10b981 !important;
+    }
+    
+    .error-message {
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+      color: #991b1b;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 20px;
+      font-size: 13px;
+    }
+  </style>
+  <script src="xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🏠 Address Lookup</h1>
+      <p>Find addresses across the USA</p>
+    </div>
+    
+    <div class="upload-section">
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">📁</div>
+        <div class="upload-text">Click or drag Excel file here</div>
+        <div class="upload-hint">us_cities_single_address_format1111.xlsx</div>
+      </div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+      
+      <div class="file-loaded" id="fileLoaded">
+        <div class="file-info">
+          <span>✅</span>
+          <div>
+            <div class="file-name" id="fileName"></div>
+            <div class="file-count" id="fileCount"></div>
+          </div>
+        </div>
+        <button class="clear-btn" id="clearBtn">Clear</button>
+      </div>
+    </div>
+    
+    <div class="search-section">
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Search by city, state, or zip code..."
+          autocomplete="off"
+          disabled
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+      <div class="examples">
+        <strong>Examples:</strong> Phoenix, Miami FL, 90001, New York NY
+      </div>
+    </div>
+    
+    <div class="results" id="results">
+      <div class="no-results">
+        <div class="no-results-icon">📤</div>
+        <p>Upload your Excel file to get started</p>
+        <p style="font-size: 11px; margin-top: 5px; color: #667eea; font-weight: 600;">Expected file: us_cities_single_address_format1111.xlsx</p>
+        <p style="font-size: 11px; margin-top: 3px;">Columns: address, city, state, zipcode</p>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

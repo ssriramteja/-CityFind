@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "US Address Lookup",
+  "version": "1.0",
+  "description": "Search for addresses by city, state, or zip code",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
